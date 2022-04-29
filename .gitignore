@@ -1,0 +1,13 @@
+# GIT IGNORE FOR C++ IN CLION
+
+# CLION setting file
+.idea
+
+# MAC OSX dir attributes
+.DS_Store
+
+# build directory
+/build
+
+# Any text files
+*.txt
