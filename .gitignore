@@ -9,5 +9,8 @@
 # build directory
 /build
 
+# image directory
+/images
+
 # Any text files
 *.txt
