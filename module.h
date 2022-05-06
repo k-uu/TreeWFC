@@ -25,6 +25,9 @@ namespace module {
         void collapse(Prototype &p);
         vector<string> getPossibleNeighbors(char dir);
         unsigned entropy() const;
+        vector<Prototype> getPrototypes() const;
+
+        static const std::unordered_map<char, int> tileValues;
     };
 
 }

@@ -14,12 +14,13 @@ namespace prototype {
 
     class Prototype {
     public:
-        int tile;
+        string tile;
         vector<string> skt;
 
-        Prototype(int type, vector<string> sockets);
+        Prototype(string type, vector<string> sockets);
         Prototype();
-        bool operator== (Prototype const &other) const;
+        bool operator==(Prototype const &other) const;
+        bool operator!=(const Prototype &other) const;
     };
 
     inline void from_json(const json &j, Prototype &p) {

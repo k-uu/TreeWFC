@@ -19,15 +19,16 @@ namespace module {
             Prototype target = *i;
             if (target == p) {
                 possible_prototypes = vector<Prototype>{target};
+                return;
             }
         }
     }
 
     void Module::constrain(string socket) {
         if (!hasCollapsed()) {
-            size_t rear = possible_prototypes.size();
-            size_t size = rear;
-            for (size_t i = 0; i < rear; i++) {
+            unsigned rear = possible_prototypes.size();
+            unsigned size = rear;
+            for (unsigned i = 0; i < rear; i++) {
                 for (string s : possible_prototypes[i].skt) {
                     if (s[0] == socket[0] && s[1] != socket[1]) {
                         rear--;
@@ -70,9 +71,9 @@ namespace module {
     }
 
     void Module::generatePrototypes() {
-        std::ifstream i("prototypes.json");
-        json j;
-        i >> j;
+        std::ifstream f("prototypes.json");
+        json j = nlohmann::json::parse(f);
+        f.close();
         possible_prototypes = j.get<vector<Prototype>>();
     }
 
@@ -83,5 +84,14 @@ namespace module {
     unsigned int Module::entropy() const {
         return possible_prototypes.size();
     }
+
+    // returns a single prototype if collapsed
+    vector<Prototype> Module::getPrototypes() const {
+        return possible_prototypes;
+    }
+
+    const unordered_map<char, int> Module::tileValues = unordered_map<char, int>{{'#',-1},
+                                                                               {'_',0},
+                                                                               {'|',1}};
 
 }

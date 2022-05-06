@@ -8,13 +8,13 @@ using prototype::Prototype;
 using module::Module;
 
 int main() {
-    Prototype p(1, vector<string>{"t0","r2","b1","l0"});
-    if (p.tile == 1) {
+    Prototype p("_", vector<string>{"t_","r_","b_","l|"});
+    if (p.tile == "_") {
         cout<<"!";
     }
 
     Module m(1, 1);
-    m.constrain("t0");
+    m.constrain("t_");
     cout << m.entropy();
     for (string s: m.getPossibleNeighbors('t')) {
         cout << s;
