@@ -13,11 +13,5 @@ int main() {
         cout<<"!";
     }
 
-    Module m(1, 1);
-    m.constrain("t_");
-    cout << m.entropy();
-    for (string s: m.getPossibleNeighbors('t')) {
-        cout << s;
-    }
 
 }

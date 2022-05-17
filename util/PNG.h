@@ -96,7 +96,7 @@ namespace cs221util {
     unsigned int width() const;
 
     /**
-      * Gets the height of this image.
+      * Gets the height_ of this image.
       * @return Height of the image.
       */
     unsigned int height() const;
@@ -106,7 +106,7 @@ namespace cs221util {
       * existing pixel data in the image when doing so, but will crop if
       * necessary. No pixel interpolation is done.
       * @param newWidth New width of the image.
-      * @param newHeight New height of the image.
+      * @param newHeight New height_ of the image.
       */
     void resize(unsigned int newWidth, unsigned int newHeight);
 

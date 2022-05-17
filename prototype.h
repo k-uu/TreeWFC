@@ -23,6 +23,7 @@ namespace prototype {
         bool operator!=(const Prototype &other) const;
     };
 
+
     inline void from_json(const json &j, Prototype &p) {
         j.at("tile").get_to(p.tile);
         j.at("sockets").get_to(p.skt);

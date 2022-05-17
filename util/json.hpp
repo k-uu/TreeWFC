@@ -63,7 +63,7 @@ SOFTWARE.
 #include <type_traits>
 #include <utility>
 
-// #include <nlohmann/detail/conversions/from_json.hpp>
+// #include <nlohmann/detail/conversions_/from_json.hpp>
 
 
 #include <algorithm> // transform
@@ -3433,7 +3433,7 @@ struct has_from_json : std::false_type {};
 
 // trait checking if j.get<T> is valid
 // use this trait instead of std::is_constructible or std::is_convertible,
-// both rely on, or make use of implicit conversions, and thus fail when T
+// both rely on, or make use of implicit conversions_, and thus fail when T
 // has several constructors/operator= (see https://github.com/nlohmann/json/issues/958)
 template <typename BasicJsonType, typename T>
 struct is_getable
@@ -4284,7 +4284,7 @@ constexpr const auto& from_json = detail::static_const<detail::from_json_fn>::va
 } // namespace
 } // namespace nlohmann
 
-// #include <nlohmann/detail/conversions/to_json.hpp>
+// #include <nlohmann/detail/conversions_/to_json.hpp>
 
 
 #include <algorithm> // copy
@@ -5052,9 +5052,9 @@ class byte_container_with_subtype : public BinaryType
 
 }  // namespace nlohmann
 
-// #include <nlohmann/detail/conversions/from_json.hpp>
+// #include <nlohmann/detail/conversions_/from_json.hpp>
 
-// #include <nlohmann/detail/conversions/to_json.hpp>
+// #include <nlohmann/detail/conversions_/to_json.hpp>
 
 // #include <nlohmann/detail/exceptions.hpp>
 
@@ -13413,7 +13413,7 @@ class binary_writer
                 }
                 else
                 {
-                    // The conversions below encode the sign in the first
+                    // The conversions_ below encode the sign in the first
                     // byte, and the value is converted to a positive number.
                     const auto positive_number = -1 - j.m_value.number_integer;
                     if (j.m_value.number_integer >= -24)
@@ -14939,7 +14939,7 @@ class binary_writer
 #include <type_traits> // is_same
 #include <utility> // move
 
-// #include <nlohmann/detail/conversions/to_chars.hpp>
+// #include <nlohmann/detail/conversions_/to_chars.hpp>
 
 
 #include <array> // array
@@ -15746,7 +15746,7 @@ inline void grisu2_digit_gen(char* buffer, int& length, int& decimal_exponent,
     //      N = 1 + ceil(p * log_10(2))
     //
     // decimal digits are sufficient to identify all binary floating-point
-    // numbers (Matula, "In-and-Out conversions").
+    // numbers (Matula, "In-and-Out conversions_").
     // This implies that the algorithm does not produce more than N decimal
     // digits.
     //
@@ -18743,7 +18743,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     @throw what @ref json_serializer<ValueType> `from_json()` method throws
 
-    @liveexample{The example below shows several conversions from JSON values
+    @liveexample{The example below shows several conversions_ from JSON values
     to other types. There a few things to note: (1) Floating-point numbers can
     be converted to integers\, (2) A JSON array can be converted to a standard
     `std::vector<short>`\, (3) A JSON object can be converted to C++
@@ -18926,7 +18926,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
     @complexity Constant.
 
     @liveexample{The example below shows how pointers to internal values of a
-    JSON value can be requested. Note that no type conversions are made and a
+    JSON value can be requested. Note that no type conversions_ are made and a
     `nullptr` is returned if the value and the requested pointer type does not
     match.,get__PointerType}
 
@@ -19022,7 +19022,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     @complexity Linear in the size of the JSON value.
 
-    @liveexample{The example below shows several conversions from JSON values
+    @liveexample{The example below shows several conversions_ from JSON values
     to other types. There a few things to note: (1) Floating-point numbers can
     be converted to integers\, (2) A JSON array can be converted to a standard
     `std::vector<short>`\, (3) A JSON object can be converted to C++
@@ -19312,7 +19312,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
 
     /// @brief access specified object element with default value
     /// @sa https://json.nlohmann.me/api/basic_json/value/
-    /// using std::is_convertible in a std::enable_if will fail when using explicit conversions
+    /// using std::is_convertible in a std::enable_if will fail when using explicit conversions_
     template < class ValueType, typename std::enable_if <
                    detail::is_getable<basic_json_t, ValueType>::value
                    && !std::is_same<value_t, ValueType>::value, int >::type = 0 >
@@ -20171,7 +20171,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         result.m_it.array_iterator = m_value.array->begin() + insert_pos;
 
         // This could have been written as:
-        // result.m_it.array_iterator = m_value.array->insert(pos.m_it.array_iterator, cnt, val);
+        // result.m_it.array_iterator = m_value.array->insert(pos_.m_it.array_iterator, cnt, val);
         // but the return value of insert is missing in GCC 4.8, so it is written this way instead.
 
         set_parents();
@@ -20185,7 +20185,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         // insert only works for arrays
         if (JSON_HEDLEY_LIKELY(is_array()))
         {
-            // check if iterator pos fits to this JSON value
+            // check if iterator pos_ fits to this JSON value
             if (JSON_HEDLEY_UNLIKELY(pos.m_object != this))
             {
                 JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", *this));
@@ -20212,7 +20212,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
         // insert only works for arrays
         if (JSON_HEDLEY_LIKELY(is_array()))
         {
-            // check if iterator pos fits to this JSON value
+            // check if iterator pos_ fits to this JSON value
             if (JSON_HEDLEY_UNLIKELY(pos.m_object != this))
             {
                 JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", *this));
@@ -20235,7 +20235,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
             JSON_THROW(type_error::create(309, "cannot use insert() with " + std::string(type_name()), *this));
         }
 
-        // check if iterator pos fits to this JSON value
+        // check if iterator pos_ fits to this JSON value
         if (JSON_HEDLEY_UNLIKELY(pos.m_object != this))
         {
             JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", *this));
@@ -20266,7 +20266,7 @@ class basic_json // NOLINT(cppcoreguidelines-special-member-functions,hicpp-spec
             JSON_THROW(type_error::create(309, "cannot use insert() with " + std::string(type_name()), *this));
         }
 
-        // check if iterator pos fits to this JSON value
+        // check if iterator pos_ fits to this JSON value
         if (JSON_HEDLEY_UNLIKELY(pos.m_object != this))
         {
             JSON_THROW(invalid_iterator::create(202, "iterator does not fit current value", *this));

@@ -11,10 +11,10 @@ namespace priority {
     // using zero-index heap
     class ModuleQueue {
 
-        unsigned height;
-        vector<Module> queue;
+        unsigned height_;
+        vector<Module> queue_;
 
-        std::unordered_map<char, int> conversions = Module::tileValues;
+        std::map<char, int> conversions_ = Module::tileValues;
 
         /**
          * Returns a double in [0, 4 * m.entropy()] giving the priority of the m. Larger priority value -> higher

@@ -5,68 +5,89 @@
 
 using prototype::Prototype;
 using std::make_pair;
-using std::unordered_map;
+using std::map;
+using std::endl;
 
 namespace module {
 
     Module::Module(unsigned x, unsigned y) {
-        pos = make_pair(x ,y);
+        pos_ = make_pair(x , y);
         generatePrototypes();
     }
 
     void Module::collapse(Prototype &p) {
-        for (auto i = possible_prototypes.begin(); i != possible_prototypes.end(); i++) {
+        for (auto i = possible_prototypes_.begin(); i != possible_prototypes_.end(); i++) {
             Prototype target = *i;
             if (target == p) {
-                possible_prototypes = vector<Prototype>{target};
+                possible_prototypes_ = vector<Prototype>{target};
                 return;
             }
         }
     }
 
     void Module::constrain(string socket) {
-        if (!hasCollapsed()) {
-            unsigned rear = possible_prototypes.size();
-            unsigned size = rear;
-            for (unsigned i = 0; i < rear; i++) {
-                for (string s : possible_prototypes[i].skt) {
-                    if (s[0] == socket[0] && s[1] != socket[1]) {
-                        rear--;
-                        std::swap(possible_prototypes[i], possible_prototypes[rear]);
+        constrain(vector<string>{socket});
+    }
+
+    void Module::constrain(vector<string> sockets) {
+        // time complexity: O(n)
+
+        unsigned size = possible_prototypes_.size();
+        unsigned rear = size;
+        unsigned i = 0;
+
+        while(i < rear) {
+
+            bool compatible = false;
+            for (string s : possible_prototypes_[i].skt) { // cycle through 4 sockets to find target socket
+                for (string socket: sockets) {
+                    if (s == socket) { //if any of the sockets fit, the prototype is compatible;
+                        compatible = true;
                     }
                 }
             }
-            while (rear < size) {
-                possible_prototypes.pop_back();
-                size--;
+            if (compatible) {
+                i++;
+            } else {
+                rear--;
+                std::swap(possible_prototypes_[i], possible_prototypes_[rear]);
             }
+
+        }
+        while (rear < size) {
+            possible_prototypes_.pop_back();
+            size--;
         }
     }
 
     bool Module::hasCollapsed() const {
-        return possible_prototypes.size() == 1;
+        return possible_prototypes_.size() == 1;
     }
 
-    vector<string> Module::getPossibleNeighbors(char dir) {
+    vector<string> Module::getPossibleNeighbors(pair<unsigned, unsigned> dir) {
         vector<string> ret = vector<string>();
 
-        static unordered_map<char, char> comp{{'t','b'},
-                                              {'r','l'},
-                                              {'b','t'},
-                                              {'l','r'}};
+        static map<pair<int, int>, char> toChar{{make_pair(0, -1),'t'},
+                                                        {make_pair(1, 0),'r'},
+                                                        {make_pair(0, 1),'b'},
+                                                        {make_pair(-1,0),'l'}};
 
-        if (!hasCollapsed()) {
-            for (const Prototype &proto : possible_prototypes) {
-                for (const string &socket : proto.skt) {
+        static map<pair<int, int>, char> comp{{make_pair(0, -1),'b'},
+                                              {make_pair(1, 0),'l'},
+                                              {make_pair(0, 1),'t'},
+                                              {make_pair(-1,0),'r'}};
 
-                    if (socket[0] == dir) {
-                        string complement = socket;
-                        complement[0] = comp[dir];
-                        ret.push_back(complement);
-                    }
+        for (const Prototype &proto : possible_prototypes_) {
+            for (const string &socket : proto.skt) {
+
+                if (socket[0] == toChar[dir]) {
+                    string complement = socket;
+                    complement[0] = comp[dir];
+                    ret.push_back(complement);
                 }
             }
         }
+
         return ret;
     }
 
@@ -74,24 +95,34 @@ namespace module {
         std::ifstream f("prototypes.json");
         json j = nlohmann::json::parse(f);
         f.close();
-        possible_prototypes = j.get<vector<Prototype>>();
+        possible_prototypes_ = j.get<vector<Prototype>>();
     }
 
     pair<unsigned int, unsigned int> Module::getPosition() const {
-        return pos;
+        return pos_;
     }
 
     unsigned int Module::entropy() const {
-        return possible_prototypes.size();
+        return possible_prototypes_.size();
     }
 
     // returns a single prototype if collapsed
     vector<Prototype> Module::getPrototypes() const {
-        return possible_prototypes;
+        return possible_prototypes_;
     }
 
-    const unordered_map<char, int> Module::tileValues = unordered_map<char, int>{{'#',-1},
-                                                                               {'_',0},
-                                                                               {'|',1}};
+    const map<char, int> Module::tileValues = map<char, int>{{'#',-1}, {'_',0}, {'|',1}};
 
+}
+
+std::ostream & operator << (std::ostream &out, const module::Module &m) {
+    out << "Number of Possible Prototypes: " << m.entropy() << endl;
+    for (const Prototype &p : m.getPrototypes()) {
+
+        out << " " << p.skt[0][1] << endl;
+        out << p.skt[3][1] << p.tile << p.skt[1][1] << endl;
+        out << " " << p.skt[2][1] << endl;
+        out << endl;
+    }
+    return out;
 }

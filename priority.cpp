@@ -8,19 +8,19 @@ using std::swap;
 
 namespace priority {
 
-    ModuleQueue::ModuleQueue(unsigned int imageHeight): height(imageHeight), queue() {}
+    ModuleQueue::ModuleQueue(unsigned int imageHeight): height_(imageHeight), queue_() {}
 
     double ModuleQueue::tilePriority(Module m) {
         unsigned y = m.getPosition().second;
 
-        assert(y < height);
+        assert(y < height_);
 
-        double multiplier = -cos(M_PI * y / height);
+        double multiplier = -cos(M_PI * y / height_);
         int tileSum = 0;
         for (const auto &p : m.getPrototypes()) {
-            tileSum += conversions[p.tile[0]];
-            for (string s: p.skt) {
-                tileSum += conversions[s[1]];
+            tileSum += conversions_[p.tile[0]];
+            for (const string &s: p.skt) {
+                tileSum += conversions_[s[1]];
             }
         }
         return multiplier * tileSum;
@@ -35,17 +35,17 @@ namespace priority {
     }
 
     void ModuleQueue::push(Module m) {
-        queue.push_back(m);
-        heapifyUp(queue.size() - 1);
+        queue_.push_back(m);
+        heapifyUp(queue_.size() - 1);
     }
 
     Module ModuleQueue::pop() {
 
         assert(!isEmpty());
 
-        Module ret = queue[0];
-        swap(queue[0], queue.back());
-        queue.pop_back();
+        Module ret = queue_[0];
+        swap(queue_[0], queue_.back());
+        queue_.pop_back();
 
         heapifyDown(0);
 
@@ -53,7 +53,7 @@ namespace priority {
     }
 
     bool ModuleQueue::isEmpty() {
-        return queue.size() == 0;
+        return queue_.size() == 0;
     }
 
     size_t ModuleQueue::leftChild(size_t parentIdx) {
@@ -73,8 +73,8 @@ namespace priority {
         if (idx == 0) return;
 
         size_t parentIdx = getParent(idx);
-        if (higherPriority(queue[idx], queue[parentIdx])) {
-            swap(queue[idx], queue[parentIdx]);
+        if (higherPriority(queue_[idx], queue_[parentIdx])) {
+            swap(queue_[idx], queue_[parentIdx]);
             heapifyUp(parentIdx);
         }
     }
@@ -86,22 +86,22 @@ namespace priority {
         size_t leftIdx = leftChild(idx);
         size_t rightIdx = rightChild(idx);
 
-        size_t priorityIdx = rightIdx >= queue.size() || higherPriority(queue[leftIdx], queue[rightIdx]) ?
+        size_t priorityIdx = rightIdx >= queue_.size() || higherPriority(queue_[leftIdx], queue_[rightIdx]) ?
                 leftIdx : rightIdx;
 
-        if (higherPriority(queue[priorityIdx], queue[idx])) {
-            swap(queue[priorityIdx], queue[idx]);
+        if (higherPriority(queue_[priorityIdx], queue_[idx])) {
+            swap(queue_[priorityIdx], queue_[idx]);
             heapifyDown(priorityIdx);
         }
 
     }
 
     bool ModuleQueue::hasChild(size_t parentIdx) {
-        return leftChild(parentIdx) < queue.size();
+        return leftChild(parentIdx) < queue_.size();
     }
 
     size_t ModuleQueue::size() {
-        return queue.size();
+        return queue_.size();
     }
 
 }

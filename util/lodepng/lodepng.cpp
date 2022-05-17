@@ -35,7 +35,7 @@ Rename this file to lodepng.cpp to use it for C++, or to lodepng.c to use it for
 #include <stdlib.h>
 
 #if defined(_MSC_VER) && (_MSC_VER >= 1310) /*Visual Studio: A few warning types are not desired here.*/
-#pragma warning( disable : 4244 ) /*implicit conversions: not warned by gcc -Wall -Wextra and requires too much casts*/
+#pragma warning( disable : 4244 ) /*implicit conversions_: not warned by gcc -Wall -Wextra and requires too much casts*/
 #pragma warning( disable : 4996 ) /*VS does not like fopen, but fopen_s is not standard C so unusable here*/
 #endif /*_MSC_VER */
 
@@ -46,7 +46,7 @@ This source file is built up in the following large parts. The code sections
 with the "LODEPNG_COMPILE_" #defines divide this up further in an intermixed way.
 -Tools for C and common code for PNG and Zlib
 -C Code for Zlib (huffman, deflate, ...)
--C Code for PNG (file format chunks, adam7, PNG filters, color conversions, ...)
+-C Code for PNG (file format chunks, adam7, PNG filters, color conversions_, ...)
 -The C++ wrapper around all of the above
 */
 
@@ -1366,10 +1366,10 @@ static const unsigned HASH_BIT_MASK = 65535; /*HASH_NUM_VALUES - 1, but C90 does
 
 typedef struct Hash
 {
-  int* head; /*hash value to head circular pos - can be outdated if went around window*/
-  /*circular pos to prev circular pos*/
+  int* head; /*hash value to head circular pos_ - can be outdated if went around window*/
+  /*circular pos_ to prev circular pos_*/
   unsigned short* chain;
-  int* val; /*circular pos to hash value*/
+  int* val; /*circular pos_ to hash value*/
 
   /*TODO: do this not only for zeros but for any repeated byte. However for PNG
   it's always going to be the zeros that dominate, so not important for PNG*/
@@ -1450,7 +1450,7 @@ static unsigned countZeros(const unsigned char* data, size_t size, size_t pos)
   return (unsigned)(data - start);
 }
 
-/*wpos = pos & (windowsize - 1)*/
+/*wpos = pos_ & (windowsize - 1)*/
 static void updateHashChain(Hash* hash, size_t wpos, unsigned hashval, unsigned short numzeros)
 {
   hash->val[wpos] = (int)hashval;
@@ -3855,14 +3855,14 @@ static const unsigned ADAM7_DY[7] = { 8, 8, 8, 4, 4, 2, 2 }; /*y delta values*/
 /*
 Outputs various dimensions and positions in the image related to the Adam7 reduced images.
 passw: output containing the width of the 7 passes
-passh: output containing the height of the 7 passes
+passh: output containing the height_ of the 7 passes
 filter_passstart: output containing the index of the start and end of each
  reduced image with filter bytes
 padded_passstart output containing the index of the start and end of each
  reduced image when without filter bytes but with padded scanlines
 passstart: output containing the index of the start and end of each reduced
  image without padding between scanlines, but still padding between the images
-w, h: width and height of non-interlaced image
+w, h: width and height_ of non-interlaced image
 bpp: bits per pixel
 "padded" is only relevant if bpp is less than 8 and a scanline or image does not
  end at a full byte
@@ -3873,7 +3873,7 @@ static void Adam7_getpassvalues(unsigned passw[7], unsigned passh[7], size_t fil
   /*the passstart values have 8 values: the 8th one indicates the byte after the end of the 7th (= last) pass*/
   unsigned i;
 
-  /*calculate width and height in pixels of each pass*/
+  /*calculate width and height_ in pixels of each pass*/
   for(i = 0; i != 7; ++i)
   {
     passw[i] = (w + ADAM7_DX[i] - ADAM7_IX[i] - 1) / ADAM7_DX[i];
@@ -4895,7 +4895,7 @@ static unsigned addChunk_IHDR(ucvector* out, unsigned w, unsigned h,
   ucvector_init(&header);
 
   lodepng_add32bitInt(&header, w); /*width*/
-  lodepng_add32bitInt(&header, h); /*height*/
+  lodepng_add32bitInt(&header, h); /*height_*/
   ucvector_push_back(&header, (unsigned char)bitdepth); /*bit depth*/
   ucvector_push_back(&header, (unsigned char)colortype); /*color type*/
   ucvector_push_back(&header, 0); /*compression method*/
@@ -5986,7 +5986,7 @@ const char* lodepng_error_text(unsigned code)
     case 78: return "failed to open file for reading"; /*file doesn't exist or couldn't be opened for reading*/
     case 79: return "failed to open file for writing";
     case 80: return "tried creating a tree of 0 symbols";
-    case 81: return "lazy matching at pos 0 is impossible";
+    case 81: return "lazy matching at pos_ 0 is impossible";
     case 82: return "color conversion to palette requested while a color isn't in palette";
     case 83: return "memory allocation failed";
     case 84: return "given image too small to contain all pixels to be encoded";
@@ -5998,7 +5998,7 @@ const char* lodepng_error_text(unsigned code)
     case 90: return "windowsize must be a power of two";
     case 91: return "invalid decompressed idat size";
     case 92: return "too many pixels, not supported";
-    case 93: return "zero width or height is invalid";
+    case 93: return "zero width or height_ is invalid";
     case 94: return "header chunk must have a size of 13 bytes";
   }
   return "unknown error code";

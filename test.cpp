@@ -1,11 +1,12 @@
 #define CATCH_CONFIG_MAIN
 #include "util/catch.hpp"
 
-#include "module.h"
 #include "priority.h"
+#include "wfcAlgorithm.h"
 
-using module::Module;
 using priority::ModuleQueue;
+using wfc::Model;
+using std::cout;
 
 TEST_CASE("prototype equility") {
     Prototype p1("_", vector<string>{"t|","r_","b#","l|"});
@@ -35,7 +36,6 @@ TEST_CASE("collapse and constrain") {
         m.constrain("r#");
         m.constrain("b#");
         m.constrain("l#");
-        m.constrain("l_"); // check that a collapsed module is not further constrained
         REQUIRE(m.entropy() == 1);
         REQUIRE(m.getPrototypes()[0] == p);
     }
@@ -48,18 +48,51 @@ TEST_CASE("tilePriority") {
     m1.constrain("r|");
     m1.constrain("b|");
     m1.constrain("l|");
-    Module m2(1, 98);
+    cout << m1;
+
+    Module m2(1, 99); // has more leaves as valid neighbors compared to m1
     m2.constrain("t#");
-    m2.constrain("r#");
+    m2.constrain("r|");
     m2.constrain("b#");
     m2.constrain("l#");
+    cout << m2;
 
-    q.push(m1);
+
+    Module m3(1, 98); // smaller height_ value (higher in image)
+    m3.constrain("t#");
+    m3.constrain("r#");
+    m3.constrain("b#");
+    m3.constrain("l|");
+    cout << m3;
+
+    q.push(m3);
     q.push(m2);
-    REQUIRE(q.size() == 2);
-    REQUIRE(q.pop().getPosition().second == 99);
-    q.pop();
+    q.push(m1);
+    REQUIRE(q.size() == 3);
+    REQUIRE(q.pop().getPrototypes()[0].tile == "|");
+    REQUIRE(q.pop().getPosition().second == 98);
+    REQUIRE(q.size() == 1);
+    REQUIRE(q.pop().getPrototypes()[0].tile == "#");
+
     REQUIRE(q.isEmpty());
+}
+
+TEST_CASE("algorithm") {
+
+    unsigned width = 10;
+    unsigned height = 10;
+
+    Model model = Model(width, height);
+
+    model.iterate(1);
+
+    for (unsigned y = 0; y < height; y++) {
+        for (unsigned x = 0; x < width; x++) {
+            cout << model.getModule(std::make_pair(x, y)).getPrototypes()[0].tile << " ";
+        }
+        cout << std::endl;
+    }
+
 }
 
 
